@@ -4,18 +4,22 @@ import argparse
 import pickle
 
 # Parse command line argument for qid
-dataset = 'How2QA'
-dataset_name = 'how2qa'
+
 parser = argparse.ArgumentParser()
+parser.add_argument("dataset", help="Question ID to look for", type=str
+                    , choices=['siq2', 'how2qa'])
 parser.add_argument("qid", help="Question ID to look for", type=int)
 args = parser.parse_args()
+
+dataset_name = args.dataset
+dataset_folder = 'SIQ2' if dataset_name == 'siq2' else 'How2QA'
 
 # Open and read JSON file
 with open(f'results/ft_{dataset_name}_100/{dataset_name}_val.json') as json_file:
     json_data = json.load(json_file)
 
 # Open and read CSV file
-with open(f'datasets/{dataset}/public_val.csv', newline='') as csv_file:
+with open(f'datasets/{dataset_folder}/public_val.csv', newline='') as csv_file:
     csv_reader = csv.DictReader(csv_file)
     for row in csv_reader:
         if int(row['qid']) == args.qid:
@@ -26,7 +30,7 @@ with open(f'datasets/{dataset}/public_val.csv', newline='') as csv_file:
             break
 
 # Open and load pickle file
-with open(f'datasets/{dataset}/subtitles.pkl', 'rb') as pkl_file:
+with open(f'datasets/{dataset_folder}/subtitles.pkl', 'rb') as pkl_file:
     subtitles = pickle.load(pkl_file)
 
 # Print question, options, correct answer_id, and subtitles
